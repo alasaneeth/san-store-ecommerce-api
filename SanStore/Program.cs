@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SanStore.Data;
+using SanStore.Infrastructure.DbContexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
