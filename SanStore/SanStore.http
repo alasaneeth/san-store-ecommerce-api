@@ -1,0 +1,6 @@
+@SanStore_HostAddress = http://localhost:5067
+
+GET {{SanStore_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
