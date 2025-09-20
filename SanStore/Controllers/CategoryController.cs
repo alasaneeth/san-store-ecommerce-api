@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SanStore.Domain.Contracts;
 using SanStore.Domain.Models;
 using SanStore.Infrastructure.DbContexts;
 
@@ -9,68 +11,79 @@ namespace SanStore.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public CategoryController(ApplicationDbContext dbContext)
+        public CategoryController(ICategoryRepository categoryRepository)
         {
-            _dbContext = dbContext;
+            _categoryRepository = categoryRepository;
 
         }
-        [HttpPost]
-        public ActionResult Create(Category category)
-        {
-            _dbContext.Category.Add(category);
-            _dbContext.SaveChanges();
-            return Ok();
-
-        }
+      
 
         [HttpGet]
-        public ActionResult Get()
+        public async Task<ActionResult>  Get()
         {
-            var catgeries = _dbContext.Category.ToList();
+            var catgeries = await _categoryRepository.GetAllAsync();
             return Ok(catgeries);
         }
 
         [HttpGet]
         [Route("Details")] 
-        public ActionResult Get(int id)
+        public async Task<ActionResult>  Get(int id)
         {
-            var category = _dbContext.Category.FirstOrDefault(x => x.Id == id);
+            var category = await _categoryRepository.GetByIdAsync(x=>x.Id == id);
             if (category == null) { 
                 return NotFound("Category ot found");            
             }
             return Ok(category);
         }
 
+        [HttpPost]
+        public async Task<ActionResult>  Create(Category category)
+        {
+         if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+           
+         var entity = await _categoryRepository.CreateAsync(category);
+
+            return Ok();
+
+        }
+
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public ActionResult Update([FromBody] Category category) {
-            var result = _dbContext.Category.Update(category);
-            _dbContext.SaveChanges();
+        public async Task<ActionResult> Update([FromBody] Category category) {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _categoryRepository.UpdateAsync(category);
             return NoContent();
         }
 
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Delete(int id) {
+        public async Task<ActionResult> Delete(int id) {
             if (id == 0) {
 
                 return BadRequest();
 
             }
-            var result = _dbContext.Category.FirstOrDefault( x => x.Id == id );
+            var result = await _categoryRepository.GetByIdAsync(x=> x.Id == id);
             if (result == null)
             {
                 return NotFound();
 
             }
 
-            _dbContext.Category.Remove(result);
-            _dbContext.SaveChanges();
+            await _categoryRepository.DeleteAsync(result);
             return NoContent();
 
          
