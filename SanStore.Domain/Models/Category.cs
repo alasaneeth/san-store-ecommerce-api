@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SanStore.Domain.Models
 {
-    public class Category : BasModel
+    public class Category : BaseModel
     {
         [Required]
         public string Name { get; set; }

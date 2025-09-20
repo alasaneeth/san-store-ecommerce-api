@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SanStore.Application\SanStore.Application.csproj" />
     <ProjectReference Include="..\SanStore.Domain\SanStore.Domain.csproj" />
     <ProjectReference Include="..\SanStore.Infrastructure\SanStore.Infrastructure.csproj" />
   </ItemGroup>

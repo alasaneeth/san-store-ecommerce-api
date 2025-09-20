@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SanStore.Domain.Common
 {
-    public class BasModel
+    public class BaseModel
     {
         [Key]
         public int Id { get; set; }
