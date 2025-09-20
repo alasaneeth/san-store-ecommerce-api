@@ -1,0 +1,19 @@
+﻿using SanStore.Application.DTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SanStore.Application.Services.Interface
+{
+    public interface ICategoryService
+    {
+        Task<CategoryDto> GetById(int id);
+        Task<IEnumerable<CategoryDto>> GetAll();
+        Task<CategoryDto> Create(CreateCategoryDTO createCategoryDto);
+        Task Update(UpdateCategoryDto updateCategoryDto);
+        Task Delete(int id);
+
+    }
+}
