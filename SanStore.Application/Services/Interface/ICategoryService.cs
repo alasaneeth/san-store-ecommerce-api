@@ -9,11 +9,11 @@ namespace SanStore.Application.Services.Interface
 {
     public interface ICategoryService
     {
-        Task<CategoryDto> GetById(int id);
-        Task<IEnumerable<CategoryDto>> GetAll();
-        Task<CategoryDto> Create(CreateCategoryDTO createCategoryDto);
-        Task Update(UpdateCategoryDto updateCategoryDto);
-        Task Delete(int id);
+        Task<CategoryDto> GetByIdAsync(int id);
+        Task<IEnumerable<CategoryDto>> GetAllAsync();
+        Task<CategoryDto> CreateAsync(CreateCategoryDTO createCategoryDto);
+        Task UpdateAsync(UpdateCategoryDto updateCategoryDto);
+        Task DeleteAsync(int id);
 
     }
 }
