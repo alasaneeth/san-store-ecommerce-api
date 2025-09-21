@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SanStore.Application.ApplicationConstant;
 using SanStore.Application.DTO;
 using SanStore.Application.Services.Interface;
+using SanStore.Domain.Common;
 using SanStore.Domain.Contracts;
 using SanStore.Domain.Models;
 using SanStore.Infrastructure.DbContexts;
+using System.Net;
 
 namespace SanStore.Controllers
 {
@@ -14,79 +18,171 @@ namespace SanStore.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+        protected APIResponse _response;
 
         public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-
+            _response = new APIResponse();
         }
       
 
         [HttpGet]
-        public async Task<ActionResult>  Get()
+        public async Task<APIResponse>  Get()
         {
-            var catgeries = await _categoryService.GetAllAsync();
-            return Ok(catgeries);
+            try
+            {
+                var catgeries = await _categoryService.GetAllAsync();
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = catgeries;
+            }
+            catch (Exception) 
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.AddError(CommenMessage.SystemError);
+            }
+        
+            return _response;
         }
 
         [HttpGet]
         [Route("Details")] 
-        public async Task<ActionResult>  Get(int id)
+        public async Task<ActionResult<APIResponse>>  Get(int id)
         {
-            var category = await _categoryService.GetByIdAsync(id);
-            if (category == null) { 
-                return NotFound("Category ot found");            
+            try
+            {
+                var category = await _categoryService.GetByIdAsync(id);
+                if (category == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.DisplayMessage = CommenMessage.RecordNotFound;
+
+                    return Ok(_response);
+                }
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = category;
             }
-            return Ok(category);
+            catch (Exception) 
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.AddError(CommenMessage.SystemError);
+            }
+
+            return _response;
         }
 
         [HttpPost]
-        public async Task<ActionResult>  Create([FromBody] CreateCategoryDTO category)
+        public async Task<ActionResult<APIResponse>>  Create([FromBody] CreateCategoryDTO category)
         {
-         if(!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
-           
-         var entity = await _categoryService.CreateAsync(category);
+                if (!ModelState.IsValid)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.DisplayMessage = CommenMessage.CreateOperationFailed;
+                    _response.AddError(ModelState.ToString());
+                    return Ok(_response);
 
-            return Ok();
+                }
+
+                var entity = await _categoryService.CreateAsync(category);
+                _response.StatusCode=HttpStatusCode.Created;
+                _response.IsSuccess = true;
+                _response.DisplayMessage = CommenMessage.CreateOperationSuccess;
+            }
+            catch  (Exception)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.DisplayMessage = CommenMessage.CreateOperationFailed;
+                _response.AddError(CommenMessage.SystemError);
+            }
+
+            return _response;
 
         }
 
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public async Task<ActionResult> Update([FromBody] UpdateCategoryDto category) {
+        public async Task<ActionResult<APIResponse>> Update([FromBody] UpdateCategoryDto dto) {
 
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.DisplayMessage = CommenMessage.UpdateOperationFailed;
+                    _response.AddError(ModelState.ToString());
+                    return Ok(_response);
+
+                }
+
+                var category = _categoryService.GetByIdAsync(dto.Id);
+
+                if(category == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.DisplayMessage = CommenMessage.UpdateOperationFailed;
+                }
+                 await _categoryService.UpdateAsync(dto);
+
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess= true;  
+                _response.DisplayMessage= CommenMessage.UpdateOperationSuccess;
+
+            }
+            catch (Exception)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.DisplayMessage = CommenMessage.UpdateOperationFailed;
+                _response.AddError(CommenMessage.SystemError);
             }
 
-            await _categoryService.UpdateAsync(category);
-            return NoContent();
+
+            return Ok();
         }
 
         [HttpDelete]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+ 
         public async Task<ActionResult> Delete(int id) {
-            if (id == 0) {
-
-                return BadRequest();
-
-            }
-            var result = await _categoryService.GetByIdAsync(id);
-            if (result == null)
+            try
             {
-                return NotFound();
+                if (id == 0)
+                {
 
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    _response.DisplayMessage = CommenMessage.DeleteOperationFailed;
+                    return Ok(_response);
+
+
+                }
+                var result = await _categoryService.GetByIdAsync(id);
+                if (result == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.DisplayMessage = CommenMessage.DeleteOperationFailed;
+                    return Ok(_response);
+
+
+
+
+
+                }
+
+                await _categoryService.DeleteAsync(id);
+
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                _response.DisplayMessage = CommenMessage.DeleteOperationSuccess;
+            } catch(Exception)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.DisplayMessage = CommenMessage.DeleteOperationFailed;
+                _response.AddError(CommenMessage.SystemError);
             }
-
-            await _categoryService.DeleteAsync(id);
-            return NoContent();
+            
+            return Ok();
 
          
         }
