@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SanStore.Application.DTO;
+using SanStore.Application.Services.Interface;
 using SanStore.Domain.Contracts;
 using SanStore.Domain.Models;
 using SanStore.Infrastructure.DbContexts;
@@ -11,11 +13,11 @@ namespace SanStore.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(ICategoryService categoryService)
         {
-            _categoryRepository = categoryRepository;
+            _categoryService = categoryService;
 
         }
       
@@ -23,7 +25,7 @@ namespace SanStore.Controllers
         [HttpGet]
         public async Task<ActionResult>  Get()
         {
-            var catgeries = await _categoryRepository.GetAllAsync();
+            var catgeries = await _categoryService.GetAllAsync();
             return Ok(catgeries);
         }
 
@@ -31,7 +33,7 @@ namespace SanStore.Controllers
         [Route("Details")] 
         public async Task<ActionResult>  Get(int id)
         {
-            var category = await _categoryRepository.GetByIdAsync(x=>x.Id == id);
+            var category = await _categoryService.GetByIdAsync(id);
             if (category == null) { 
                 return NotFound("Category ot found");            
             }
@@ -39,14 +41,14 @@ namespace SanStore.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult>  Create(Category category)
+        public async Task<ActionResult>  Create([FromBody] CreateCategoryDTO category)
         {
          if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
            
-         var entity = await _categoryRepository.CreateAsync(category);
+         var entity = await _categoryService.CreateAsync(category);
 
             return Ok();
 
@@ -56,14 +58,14 @@ namespace SanStore.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public async Task<ActionResult> Update([FromBody] Category category) {
+        public async Task<ActionResult> Update([FromBody] UpdateCategoryDto category) {
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _categoryRepository.UpdateAsync(category);
+            await _categoryService.UpdateAsync(category);
             return NoContent();
         }
 
@@ -76,14 +78,14 @@ namespace SanStore.Controllers
                 return BadRequest();
 
             }
-            var result = await _categoryRepository.GetByIdAsync(x=> x.Id == id);
+            var result = await _categoryService.GetByIdAsync(id);
             if (result == null)
             {
                 return NotFound();
 
             }
 
-            await _categoryRepository.DeleteAsync(result);
+            await _categoryService.DeleteAsync(id);
             return NoContent();
 
          

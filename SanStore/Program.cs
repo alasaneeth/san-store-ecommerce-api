@@ -1,10 +1,13 @@
 using SanStore.Infrastructure;
+using SanStore.Application;
 using Microsoft.EntityFrameworkCore;
 using SanStore.Infrastructure.DbContexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddApplicationService();
 
 builder.Services.AddInfrastructureServices();
 

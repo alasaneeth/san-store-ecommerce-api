@@ -45,10 +45,10 @@ namespace SanStore.Application.Services
 
         public async Task<CategoryDto> GetByIdAsync(int id)
         {
-            var category = await _categoryRepository.GetByIdAsync(x=>x.Id == id);
+            var category = await _categoryRepository.GetByIdAsync(x => x.Id == id);
+
             return _mapper.Map<CategoryDto>(category);
         }
-
         public async Task UpdateAsync(UpdateCategoryDto updateCategoryDto)
         {
             var category = _mapper.Map<Category>(updateCategoryDto);
