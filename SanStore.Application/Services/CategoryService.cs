@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SanStore.Application.DTO;
+using SanStore.Application.DTO.CategoryDtos;
 using SanStore.Application.Services.Interface;
 using SanStore.Domain.Contracts;
 using SanStore.Domain.Models;

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SanStore.Application.DTO
+namespace SanStore.Application.DTO.CategoryDtos
 {
-    public class CategoryDto
+    public class CreateCategoryDTO
     {
-        public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
     }
 }

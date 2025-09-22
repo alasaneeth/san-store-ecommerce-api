@@ -1,4 +1,4 @@
-﻿using SanStore.Application.DTO;
+﻿using SanStore.Application.DTO.CategoryDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

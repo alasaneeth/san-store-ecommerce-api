@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SanStore.Application.DTO
+namespace SanStore.Application.DTO.BrandDtos
 {
-    public class UpdateCategoryDto
+    public class BrandDto
     {
-        [Required]
         public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }    
+        public string Name { get; set; }
+        public int EstablishYear { get; set; }
+
     }
 }
