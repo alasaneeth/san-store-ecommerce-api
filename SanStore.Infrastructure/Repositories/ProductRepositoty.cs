@@ -19,6 +19,16 @@ namespace SanStore.Infrastructure.Repositories
             
         }
 
+        public async Task<IEnumerable<Product>> GetAllProductAsync()
+        {
+            return await _dbContext.Products.Include(x=>x.category).Include(x=>x.Brand).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Product> GetDetailAsync(int id)
+        {
+            return await _dbContext.Products.Include(x => x.category).Include(x => x.Brand).AsNoTracking().FirstOrDefaultAsync(x=>x.Id == id);
+        }
+
         public async Task UpdateAsync(Product product)
         {
              _dbContext.Update(product);

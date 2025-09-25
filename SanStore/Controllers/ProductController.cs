@@ -70,9 +70,33 @@ namespace SanStore.Web.Controllers
                 return Ok(_response);
             }
         }
+        [HttpGet]
+        [Route("Details")]
+        public async Task<ActionResult<APIResponse>> Get(int id)
+        {
+            try
+            {
+                var category = await _productService.GetByIdAsync(id);
+                if (category == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.DisplayMessage = CommenMessage.RecordNotFound;
 
+                    return Ok(_response);
+                }
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = category;
+            }
+            catch (Exception)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.AddError(CommenMessage.SystemError);
+            }
+
+            return _response;
+        }
         [HttpPut]
-
         public async Task<ActionResult<APIResponse>> Update([FromBody] UpdateProductDto dto)
         {
 

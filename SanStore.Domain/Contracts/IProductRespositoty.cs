@@ -9,6 +9,8 @@ namespace SanStore.Domain.Contracts
 {
     public interface IProductRespositoty : IGenericRepository<Product>
     {
+        Task<IEnumerable<Product>> GetAllProductAsync();
+        Task<Product> GetDetailAsync(int id);
         Task UpdateAsync(Product product);
 
     }

@@ -25,7 +25,10 @@ namespace SanStore.Application.Common
 
             CreateMap<Product,CreateProductDto>().ReverseMap();
             CreateMap<Product,UpdateProductDto>().ReverseMap();
-            CreateMap<Product,ProductDto>().ReverseMap();
+            CreateMap<Product, ProductDto>()
+                .ForMember(x => x.category, opt => opt.MapFrom(source => source.category.Name))
+                .ForMember(x => x.Brand, opt => opt.MapFrom(source => source.Brand.Name));
+
 
 
         }
