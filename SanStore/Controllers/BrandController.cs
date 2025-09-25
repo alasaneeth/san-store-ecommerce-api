@@ -92,6 +92,7 @@ namespace SanStore.Web.Controllers
                 var entity = await _brandService.CreateAsync(brandDto);
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.IsSuccess = true;
+                _response.Result = entity;
                 _response.DisplayMessage = CommenMessage.CreateOperationSuccess;
 
             }

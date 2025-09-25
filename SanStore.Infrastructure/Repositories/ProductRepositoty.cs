@@ -11,18 +11,19 @@ using System.Threading.Tasks;
 
 namespace SanStore.Infrastructure.Repositories
 {
-    public class BrandRepository : GenericRepository<Brand>, IBrandRepository
+    public class ProductRepositoty : GenericRepository<Product>, IProductRespositoty
     {
-        public BrandRepository(ApplicationDbContext dbContext) : base(dbContext)
+
+        public ProductRepositoty(ApplicationDbContext dbContext) : base(dbContext)
         {
             
         }
 
-        public async Task UpdateAsync(Brand brand)
+        public async Task UpdateAsync(Product product)
         {
-            _dbContext.Update(brand);
+             _dbContext.Update(product);
             await _dbContext.SaveChangesAsync();
+            
         }
     }
 }
-

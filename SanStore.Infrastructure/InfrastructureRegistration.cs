@@ -21,6 +21,7 @@ namespace SanStore.Infrastructure
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IProductRespositoty, ProductRepositoty>();
 
             return services;
         }

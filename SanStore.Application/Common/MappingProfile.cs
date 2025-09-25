@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SanStore.Application.DTO.BrandDtos;
 using SanStore.Application.DTO.CategoryDtos;
+using SanStore.Application.DTO.ProductDto;
 using SanStore.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,10 @@ namespace SanStore.Application.Common
             CreateMap<Brand, CreateBrandDto>().ReverseMap();
             CreateMap<Brand, UpdateBrandDto>().ReverseMap();
             CreateMap<Brand,BrandDto>().ReverseMap();
+
+            CreateMap<Product,CreateProductDto>().ReverseMap();
+            CreateMap<Product,UpdateProductDto>().ReverseMap();
+            CreateMap<Product,ProductDto>().ReverseMap();
 
 
         }
