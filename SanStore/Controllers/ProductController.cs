@@ -42,6 +42,26 @@ namespace SanStore.Web.Controllers
             return _response;
         }
 
+        [HttpGet]
+        [Route("Filter")]
+        public async Task<APIResponse> GetFilter( int? categoryId, int? brandId)
+        {
+            try
+            {
+                var products = await _productService.GetAllbyFilterAsync(categoryId, brandId);
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = products;
+            }
+            catch (Exception)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.AddError(CommenMessage.SystemError);
+            }
+
+            return _response;
+        }
+
         [HttpPost]
         public async Task<ActionResult<APIResponse>> Create([FromBody] CreateProductDto product)
         {

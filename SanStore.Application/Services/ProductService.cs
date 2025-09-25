@@ -46,6 +46,23 @@ namespace SanStore.Application.Services
             return _mapper.Map<List<ProductDto>>(products);
         }
 
+        public async Task<IEnumerable<ProductDto>> GetAllbyFilterAsync(int? categoryId, int? brandId)
+        {
+            var query = await _productRepository.GetAllProductAsync();
+
+            if(categoryId > 0)
+            {
+                query = query.Where(x=>x.categoryId == categoryId);
+            }
+
+            if(brandId > 0)
+            {
+                query = query.Where(x => x.BrandId == brandId);
+            }
+            var result = _mapper.Map<List<ProductDto>>(query);
+            return result;
+        }
+
         public async Task<ProductDto> GetByIdAsync(int id)
         {
             var product = await _productRepository.GetDetailAsync(id);
