@@ -12,8 +12,8 @@ using SanStore.Infrastructure.DbContexts;
 namespace SanStore.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250926092029_IdentityUser")]
-    partial class IdentityUser
+    [Migration("20250926114027_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
