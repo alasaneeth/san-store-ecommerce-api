@@ -23,7 +23,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    // Identity options can be configured here
+    options.SignIn.RequireConfirmedEmail = false;
+    options.User.RequireUniqueEmail = false;
 }).AddEntityFrameworkStores<ApplicationDbContext>();
 #endregion
 

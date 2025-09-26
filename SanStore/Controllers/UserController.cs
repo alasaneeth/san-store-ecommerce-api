@@ -24,6 +24,7 @@ namespace SanStore.Web.Controllers
         }
 
         [HttpPost]
+        [Route("Register")]
         public async Task<APIResponse> Register(Register register)
         {
             try
@@ -40,6 +41,43 @@ namespace SanStore.Web.Controllers
                 _response.IsSuccess = true;
                 _response.StatusCode = HttpStatusCode.Created;
                 _response.DisplayMessage = CommenMessage.RegistrationSuccess;
+                _response.Result = result;
+            }
+            catch (Exception)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.AddError(CommenMessage.SystemError);
+            }
+
+            return _response;
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<APIResponse> Login(Login login)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _response.AddError(ModelState.ToString());
+                    _response.AddWarning(CommenMessage.RegistrationFalid);
+                    return _response;
+                }
+
+                var result = await _authService.Login(login);
+
+                if(result is string)
+                {
+                    _response.IsSuccess= true;
+                    _response.StatusCode= HttpStatusCode.BadRequest;
+                    _response.DisplayMessage= CommenMessage.LoginFalid;
+                     return _response;
+                }
+
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.Created;
+                _response.DisplayMessage = CommenMessage.LoginSuccess;
                 _response.Result = result;
             }
             catch (Exception)
