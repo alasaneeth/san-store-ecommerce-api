@@ -2,6 +2,7 @@ using SanStore.Infrastructure;
 using SanStore.Application;
 using Microsoft.EntityFrameworkCore;
 using SanStore.Infrastructure.DbContexts;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,12 @@ builder.Services.AddCors(options=>
 #region Database Connectivity
 builder.Services.AddDbContext<ApplicationDbContext>(options=> 
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<IdentityUser,IdentityRole>(options=>
+{
+
+}).AddEntityFrameworkStores<ApplicationDbContext>();
+
 #endregion End of Database Connectivity
 
 builder.Services.AddControllers();
