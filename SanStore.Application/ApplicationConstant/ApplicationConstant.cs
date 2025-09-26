@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,12 @@ namespace SanStore.Application.ApplicationConstant
 
     public class CommenMessage
     {
+        public const string RegistrationSuccess = "Registration Success";
+        public const string RegistrationFalid = "Registration Faild";
+
+        public const string LoginSuccess = "Login Success";
+        public const string LoginFalid = "Login Faild";
+
         public const string CreateOperationSuccess = "Record Created Successfully";
         public const string UpdateOperationSuccess = "Record Updated Successfully";
         public const string DeleteOperationSuccess = "Record Deleted Successfully";

@@ -28,11 +28,11 @@ namespace SanStore.Application.Services
             ApplicationUser.Email = register.Email;
             ApplicationUser.UserName = register.Email;
             
-            var result = await _userManager.CreateAsync(ApplicationUser);
+            var result = await _userManager.CreateAsync(ApplicationUser,register.Password);
 
             if (result.Succeeded) 
             {
-                
+                await _userManager.AddToRoleAsync(ApplicationUser, "ADMIN");
             }
 
             return result.Errors;

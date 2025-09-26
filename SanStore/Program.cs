@@ -62,6 +62,9 @@ var app = builder.Build();
 // Seed database
 await UpdateDatabaseAsync(app);
 
+var serviceProvider = app.Services;
+await SeedData.SeedRoles(serviceProvider);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

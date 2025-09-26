@@ -20,7 +20,7 @@ namespace SanStore.Web.Controllers
 
         public ProductController(IProductService productService)
         {
-            _productService = productService; // Fixed assignment
+            _productService = productService; 
             _response = new APIResponse();  
         }
 
