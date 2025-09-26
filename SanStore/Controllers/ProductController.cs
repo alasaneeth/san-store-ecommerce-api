@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SanStore.Application.ApplicationConstant;
 using SanStore.Application.DTO.CategoryDtos;
 using SanStore.Application.DTO.ProductDto;
+using SanStore.Application.InputModels;
 using SanStore.Application.Services;
 using SanStore.Application.Services.Interface;
 using SanStore.Domain.Common;
@@ -29,6 +30,26 @@ namespace SanStore.Web.Controllers
             try
             {
                 var products = await _productService.GetAllAsync();
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = products;
+            }
+            catch (Exception)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.AddError(CommenMessage.SystemError);
+            }
+
+            return _response;
+        }
+
+        [HttpPost]
+        [Route("GetPagination")]
+        public async Task<APIResponse> Get(PaginationInputModel pagination)
+        {
+            try
+            {
+                var products = await _productService.GetPagination(pagination);
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = products;

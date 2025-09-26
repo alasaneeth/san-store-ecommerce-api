@@ -2,7 +2,9 @@
 using SanStore.Application.DTO.BrandDtos;
 using SanStore.Application.DTO.CategoryDtos;
 using SanStore.Application.DTO.ProductDto;
+using SanStore.Application.InputModels;
 using SanStore.Application.Services.Interface;
+using SanStore.Application.ViewModels;
 using SanStore.Domain.Contracts;
 using SanStore.Domain.Models;
 using System;
@@ -17,12 +19,14 @@ namespace SanStore.Application.Services
     {
 
         private readonly IProductRespositoty _productRepository;
+        private readonly IPaginationService<ProductDto,Product> _paginationService;
         private readonly IMapper _mapper;
 
-        public ProductService(IProductRespositoty productRepository, IMapper mapper)
+        public ProductService(IProductRespositoty productRepository, IMapper mapper, IPaginationService<ProductDto, Product> paginationService)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+            _paginationService = paginationService;
         }
 
         public async Task<ProductDto> CreateAsync(CreateProductDto createProductDto)
@@ -48,7 +52,8 @@ namespace SanStore.Application.Services
 
         public async Task<IEnumerable<ProductDto>> GetAllbyFilterAsync(int? categoryId, int? brandId)
         {
-            var query = await _productRepository.GetAllProductAsync();
+            var data = await _productRepository.GetAllProductAsync();
+            IEnumerable<Product> query = data;
 
             if(categoryId > 0)
             {
@@ -67,6 +72,14 @@ namespace SanStore.Application.Services
         {
             var product = await _productRepository.GetDetailAsync(id);
             return _mapper.Map<ProductDto>(product);
+        }
+
+        public async Task<PaginationVM<ProductDto>> GetPagination(PaginationInputModel pagination)
+        {
+            var source = await _productRepository.GetAllProductAsync();
+
+            var result = _paginationService.GetPagination(source, pagination);
+            return result;
         }
 
         public async Task UpdateAsync(UpdateProductDto updateProductDto)
