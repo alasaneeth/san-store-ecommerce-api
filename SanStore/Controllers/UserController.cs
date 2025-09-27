@@ -76,7 +76,7 @@ namespace SanStore.Web.Controllers
                 }
 
                 _response.IsSuccess = true;
-                _response.StatusCode = HttpStatusCode.Created;
+                _response.StatusCode = HttpStatusCode.OK;
                 _response.DisplayMessage = CommenMessage.LoginSuccess;
                 _response.Result = result;
             }

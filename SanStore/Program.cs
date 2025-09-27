@@ -1,10 +1,14 @@
-using SanStore.Infrastructure;
-using SanStore.Application;
-using Microsoft.EntityFrameworkCore;
-using SanStore.Infrastructure.DbContexts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using SanStore.Application;
 using SanStore.Domain.Common;
+using SanStore.Infrastructure;
+using SanStore.Infrastructure.DbContexts;
 using SanStore.Infrastructure.Seedings;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +35,59 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ClockSkew = TimeSpan.Zero,
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+
+    };
+
+});
+
+builder.Services.AddSwaggerGen(options=>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Description = "JWT Authorization header using the Bearer scheme.\r\n" +
+                     "Enter 'Bearer' [space] and then your token in the text input below.\r\n" +
+                     "Example: 'Bearer 12345abcdef'"
+
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "Oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
+
+            },
+            new List<string>()
+        }
+    });
+});
 
 #region Configuration of seeding database
 static async Task UpdateDatabaseAsync(IApplicationBuilder app)
@@ -66,6 +122,8 @@ await UpdateDatabaseAsync(app);
 var serviceProvider = app.Services;
 await SeedData.SeedRoles(serviceProvider);
 
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -75,6 +133,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("CustomePolicy");
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

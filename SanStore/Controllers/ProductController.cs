@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SanStore.Application.ApplicationConstant;
 using SanStore.Application.DTO.CategoryDtos;
@@ -24,6 +25,7 @@ namespace SanStore.Web.Controllers
             _response = new APIResponse();  
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<APIResponse> Get()
         {
@@ -43,6 +45,7 @@ namespace SanStore.Web.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         [Route("GetPagination")]
         public async Task<APIResponse> Get(PaginationInputModel pagination)
