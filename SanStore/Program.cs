@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -32,9 +33,18 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 }).AddEntityFrameworkStores<ApplicationDbContext>();
 #endregion
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+
+builder.Services.AddControllers(options =>
+{
+    options.CacheProfiles.Add("Default", new CacheProfile
+    {
+        Duration = 30
+    });
+});
+
+builder.Services.AddResponseCaching();
 
 builder.Services.AddAuthentication(options =>
 {

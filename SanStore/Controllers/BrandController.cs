@@ -27,6 +27,7 @@ namespace SanStore.Web.Controllers
             _response = new APIResponse();
         }
 
+        [ResponseCache(CacheProfileName = "Default")]
         [HttpGet]
         public async Task<APIResponse> Get()
         {
