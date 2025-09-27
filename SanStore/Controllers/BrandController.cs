@@ -19,12 +19,14 @@ namespace SanStore.Web.Controllers
     public class BrandController : ControllerBase
     {
         private readonly IBrandService _brandService;
+        private readonly ILogger<BrandController> _logger;
         protected APIResponse _response;
 
-        public BrandController(IBrandService brandService)
+        public BrandController(IBrandService brandService, ILogger<BrandController> logger)
         {
             _brandService = brandService;
             _response = new APIResponse();
+            _logger = logger;
         }
 
         [ResponseCache(CacheProfileName = "Default")]
@@ -37,9 +39,14 @@ namespace SanStore.Web.Controllers
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
                 _response.Result = brands;
+
+                throw new NullReferenceException();
+                _logger.LogInformation("Records Fetched");
             }
             catch (Exception)
             {
+                _logger.LogError("Brand Controller get function Faild");
+
                 _response.StatusCode = HttpStatusCode.InternalServerError;
                 _response.AddError(CommenMessage.SystemError);
             }

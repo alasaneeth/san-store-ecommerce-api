@@ -9,6 +9,7 @@ using SanStore.Domain.Common;
 using SanStore.Infrastructure;
 using SanStore.Infrastructure.DbContexts;
 using SanStore.Infrastructure.Seedings;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,16 @@ builder.Services.AddControllers(options =>
     {
         Duration = 30
     });
+});
+
+builder.Host.UseSerilog((context, config) =>
+{
+    config.WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day);
+
+    if (context.HostingEnvironment.IsProduction() == false)
+    {
+        config.WriteTo.Console();
+    }
 });
 
 builder.Services.AddResponseCaching();
